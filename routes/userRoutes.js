@@ -1,33 +1,29 @@
-const express = require("express");
-const {
-  registerUser,
-  loginUser
-} = require("../controllers/userController");
-
-const validateToken = require("../middleware/validateTokenHandler");
-const {
-  getAllCommunities,
-  createCommunity,
-  getCommunityMembers,
-  addCommunityMember,
-  removeCommunityMember
-} = require("../controllers/communityController");
-
-
-
+const express = require('express');
+// Import controller functions
+const userController = require('../controllers/userController');
+const communityController = require('../controllers/communityController');
+const roleController = require('../controllers/roleController');
+const memberController = require('../controllers/memberController');
+const validateToken = require('../middleware/validateTokenHandler');
 const router = express.Router();
-
-// Authentication routes
-router.post("/user/signup", registerUser);
-router.post("/user/login", loginUser);
+// User routes
+router.post('/v1/auth/signup', userController.signup);
+router.post('/v1/auth/signin', userController.signin);
+router.get('/v1/auth/me',validateToken, userController.getMe);
 
 // Community routes
-router.get('/communities',validateToken, getAllCommunities);
-router.post('/communities',validateToken, createCommunity);
+router.post('/v1/community',validateToken, communityController.createCommunity);
+router.get('/v1/community', communityController.getAllCommunities);
+router.get('/v1/community/:id/members', communityController.getAllCommunityMembers);
+router.get('/v1/community/me/owner',validateToken, communityController.getOwnedCommunities);
+router.get('/v1/community/me/member',validateToken, communityController.getJoinedCommunities);
 
-// Moderation routes
-router.get('/communities/:communityId/members',validateToken, getCommunityMembers);
-router.post('/communities/:communityId/members', validateToken,addCommunityMember);
-router.delete('/communities/:communityId/members/:memberId',validateToken, removeCommunityMember);
+// Role routes
+router.post('/v1/role', roleController.createRole);
+router.get('/v1/role', roleController.getAllRoles);
+
+// // Member routes
+router.post('/v1/member',validateToken, memberController.addMember);
+router.delete('/v1/member/:id',validateToken, memberController.removeMember);
 
 module.exports = router;

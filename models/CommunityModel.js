@@ -1,10 +1,16 @@
-// Community.js
 const mongoose = require('mongoose');
+const Member = require('../models/MemberModel');
+const { Snowflake } = require('@theinternetfolks/snowflake');
 
 const communitySchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  id: { type: String, unique: true, required: true },
+  name: { type: String, maxlength: 128 },
+  slug: { type: String, maxlength: 255 },
+  owner: { type: String },
+  created_at: { type: Date },
+  updated_at: { type: Date },
 });
 
-module.exports = mongoose.model('Community', communitySchema);
+const Community = mongoose.model('community', communitySchema);
+
+module.exports = Community;
